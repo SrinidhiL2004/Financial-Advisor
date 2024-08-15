@@ -59,20 +59,24 @@ def get_stock_recommendations(risk_profile):
     return stock_data
 
 @app.route('/recommend_stocks', methods=['GET'])
+@app.route('/recommend_stocks', methods=['GET'])
 def recommend_stocks():
-    try:
-        risk_profile = request.args.get('riskProfile')
-        if not risk_profile:
-            app.logger.error("Missing riskProfile parameter")
-            return jsonify({'error': 'Missing riskProfile parameter'}), 400
+    risk_profile = request.args.get('riskProfile')
+    app.logger.debug(f"Received riskProfile: {risk_profile}")
 
-        stocks = get_stock_recommendations(risk_profile)
-        if isinstance(stocks, tuple):  # Check if the function returned a tuple (error response)
-            return stocks
-        return jsonify(stocks)
-    except Exception as e:
-        app.logger.error(f"Error in /recommend_stocks endpoint: {e}")
-        return jsonify({'error': 'Internal Server Error'}), 500
+    if not risk_profile:
+        app.logger.error("Missing riskProfile parameter")
+        return jsonify({'error': 'Missing riskProfile parameter'}), 400
+
+    stocks = get_stock_recommendations(risk_profile)
+    app.logger.debug(f"Stocks found: {stocks}")
+
+    if not stocks:
+        app.logger.info(f"No stock recommendations available for riskProfile: {risk_profile}")
+        return jsonify({'message': 'No stock recommendations available for this risk profile'}), 404
+
+    return jsonify(stocks)
+
 
 # Serve static files like images
 @app.route('/<path:filename>')
