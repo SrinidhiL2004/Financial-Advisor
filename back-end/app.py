@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request,render_template
 from flask_cors import CORS
 import yfinance as yf
 
@@ -8,7 +8,7 @@ CORS(app)
 
 @app.route('/')
 def index():
-    return "Welcome to the Stock Recommendation API!"
+    return render_template('home.html')
 
 @app.route('/stock/<ticker>', methods=['GET'])
 def get_stock_data(ticker):
