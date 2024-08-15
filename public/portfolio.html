@@ -94,30 +94,36 @@
       document.getElementById('alternate').innerText = userProfile.alternateAllocation;
     }
 
+    const backendUrl = "https://financial-advisor-y5mv.onrender.com"; // Replace with your actual Render backend URL
+
     async function fetchRecommendedStocks(riskProfile) {
         try {
-          const response = await fetch(`http://127.0.0.1:5000/recommend_stocks?riskProfile=${riskProfile}`);
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const stocks = await response.json();
-          const stocksContainer = document.getElementById('stocks');
-          stocksContainer.innerHTML = '';
-          if (stocks.length === 0) {
-            stocksContainer.innerHTML = '<p>No stock recommendations available for this risk profile.</p>';
-          } else {
-            stocks.forEach(stock => {
-              const stockElement = document.createElement('p');
-              stockElement.innerText = `${stock.symbol}: ${stock.name} (₹${stock.price})`;
-              stocksContainer.appendChild(stockElement);
-            });
-          }
+            const response = await fetch(`${backendUrl}/recommend_stocks?riskProfile=${riskProfile}`);
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const stocks = await response.json();
+            const stocksContainer = document.getElementById('stocks');
+            stocksContainer.innerHTML = '';
+    
+            if (stocks.length === 0) {
+                stocksContainer.innerHTML = '<p>No stock recommendations available for this risk profile.</p>';
+            } else {
+                stocks.forEach(stock => {
+                    const stockElement = document.createElement('p');
+                    stockElement.innerText = `${stock.symbol}: ${stock.name} (₹${stock.price})`;
+                    stocksContainer.appendChild(stockElement);
+                });
+            }
         } catch (error) {
-          console.error('Error fetching stock recommendations:', error);
-          const stocksContainer = document.getElementById('stocks');
-          stocksContainer.innerHTML = '<p>Failed to load stock recommendations.</p>';
+            console.error('Error fetching stock recommendations:', error);
+            const stocksContainer = document.getElementById('stocks');
+            stocksContainer.innerHTML = '<p>Failed to load stock recommendations.</p>';
         }
-      }
+    }
+    
       
   </script>
 </body>
