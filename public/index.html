@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investo</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+    }
+    .modal-header {
+      border-bottom: none;
+      display: flex;
+      justify-content: center;
+    }
+    .modal-header .close {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+    }
+    .modal-title {
+      font-size: 24px;
+      color: #343a40;
+    }
+    .modal-body {
+      padding: 2rem;
+    }
+    .form-group label {
+      color: #007bff;
+    }
+    .form-group input {
+      border-radius: 4px;
+      border: 1px solid #ced4da;
+      padding: 10px;
+      width: 100%;
+    }
+    .btn-custom {
+      background-color: #007bff;
+      color: #ffffff;
+      border-radius: 4px;
+      padding: 10px 20px;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .google-btn {
+      background-color: #db4437;
+      color: #ffffff;
+      border-radius: 4px;
+      padding: 10px 20px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+  </style>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyCF0rAGn6oWEp0Z1eZaaUEKvW8fcEisd4I",
+      authDomain: "stockrecommendationwebsite.firebaseapp.com",
+      projectId: "stockrecommendationwebsite",
+      storageBucket: "stockrecommendationwebsite.appspot.com",
+      messagingSenderId: "166461693887",
+      appId: "1:166461693887:web:cac88424c60943eac58b0a",
+      measurementId: "G-33B2MHTKR1"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+  
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        console.log('User signed up:', userCredential.user);
+        alert('Signup successful!');
+      } catch (error) {
+        console.error('Error signing up:', error.code, error.message);
+        alert(`Error signing up: ${error.message}`);
+      }
+    });
+  
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+  
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log('User logged in:', userCredential.user);
+        alert('Login successful!');
+        window.location.href = 'profile.html';
+      } catch (error) {
+        console.error('Error logging in:', error.code, error.message);
+        alert(`Error logging in: ${error.message}`);
+      }
+    });
+  
+    document.getElementById('google-sign-in').addEventListener('click', async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log('User signed in with Google:', user);
+        alert('Google Sign-In successful!');
+        window.location.href = 'profile.html';
+      } catch (error) {
+        console.error('Error signing in with Google:', error.code, error.message);
+        alert(`Error signing in with Google: ${error.message}`);
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="container text-center">
+    <h1>Investo</h1>
+    <button class="btn btn-primary" data-toggle="modal" data-target="#authModal">Login / Sign Up</button>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Welcome to Investo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <button id="google-sign-in" class="btn google-btn">
+            <span class="material-icons" style="vertical-align: middle;">login</span> Continue with Google
+          </button>
+          <div class="text-center my-3">Or</div>
+          <div>
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+              <div class="form-group">
+                <label for="signup-email">Your Email Address</label>
+                <input type="email" id="signup-email" class="form-control" placeholder="Email" required>
+              </div>
+              <div class="form-group">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" class="form-control" placeholder="Password" required>
+              </div>
+              <button type="submit" class="btn btn-custom">Continue</button>
+            </form>
+          </div>
+          <div class="text-center my-3">Or</div>
+          <div>
+            <h2>Login</h2>
+            <form id="login-form">
+              <div class="form-group">
+                <label for="login-email">Your Email Address</label>
+                <input type="email" id="login-email" class="form-control" placeholder="Email" required>
+              </div>
+              <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" class="form-control" placeholder="Password" required>
+              </div>
+              <button type="submit" class="btn btn-custom">Continue</button>
+            </form>
+          </div>
+          <div class="text-center mt-3">
+            <small>By proceeding, I agree to <a href="#">T&C</a>, <a href="#">Privacy Policy</a></small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Show modal on page load (optional)
+    $(document).ready(function() {
+      $('#authModal').modal('show');
+    });
+  </script>
+</body>
+</html>

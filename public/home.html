@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investo</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .top-ribbon {
+      background-color: #0275d8;
+      color: white;
+      padding: 20px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+    .logo-container img {
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
+    }
+    .logo-container h1 {
+      font-size: 24px;
+      margin: 0;
+      color: white;
+    }
+    .btn-login {
+      background-color: #ffffff;
+      color: #0275d8;
+      border: 1px solid #0275d8;
+      border-radius: 5px;
+      padding: 5px 15px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .btn-login:hover {
+      background-color: #0275d8;
+      color: white;
+    }
+    .container {
+      text-align: center;
+      padding: 150px 20px;
+    }
+    .main-text {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .sub-text {
+      font-size: 24px;
+      color: #777;
+      margin-bottom: 40px;
+    }
+    .btn-custom {
+      background-color: #0275d8;
+      color: #fff;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 18px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    .btn-custom:hover {
+      background-color: #025aa5;
+    }
+    /* New styles for the second section */
+    .scroll-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100vh;
+      padding: 50px;
+      background-color: #e9f5ff;
+    }
+    .scroll-section .content {
+      flex: 1;
+      margin: 20px;
+      transition: transform 1s ease, opacity 1s ease;
+    }
+    .scroll-section .text-container {
+      font-size: 32px;
+      font-weight: bold;
+      color: #0275d8;
+    }
+    .scroll-section .highlight-text {
+      font-size: 40px;
+      color: #34a853;
+      animation: pop 1s ease-in-out;
+    }
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .scroll-section .btn-more {
+      background-color: #34a853;
+      color: #fff;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 18px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+    .scroll-section .btn-more:hover {
+      background-color: #2a8f42;
+    }
+    .scroll-effect {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    .scroll-effect.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .scroll-effect-right {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    .scroll-effect-right.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="top-ribbon">
+    <div class="logo-container">
+      <img src="logo.jpg" alt="Investo Logo">
+      <h1>Investo</h1>
+    </div>
+    <a href="index.html" class="btn-login">Login/Register</a>
+  </div>
+  <div class="container">
+    <div class="main-text">Navigating the market, <br>one stock at a time</div>
+    <div class="sub-text">Your financial compass</div>
+    <a href="index.html" class="btn btn-custom">Get started</a>
+  </div>
+  <div class="scroll-section">
+    <div class="content scroll-effect" id="left-content">
+      <div class="text-container">
+        Make smart investments<br>
+        <span class="highlight-text">using Investo</span><br>
+        <a href="index.html" class="btn-more">Know more</a>
+      </div>
+    </div>
+    <div class="content scroll-effect-right" id="right-content">
+      <img src="img2.png" alt="Investment Image">
+    </div>
+  </div>
+  <script>
+    function checkVisibility() {
+      var leftContent = document.getElementById('left-content');
+      var rightContent = document.getElementById('right-content');
+      var scrollPosition = window.scrollY + window.innerHeight;
+
+      if (scrollPosition > leftContent.offsetTop) {
+        leftContent.classList.add('show');
+      } else {
+        leftContent.classList.remove('show');
+      }
+
+      if (scrollPosition > rightContent.offsetTop) {
+        rightContent.classList.add('show');
+      } else {
+        rightContent.classList.remove('show');
+      }
+    }
+
+    window.addEventListener('scroll', checkVisibility);
+    window.addEventListener('load', checkVisibility);
+  </script>
+</body>
+</html>

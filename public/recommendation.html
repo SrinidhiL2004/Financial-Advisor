@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Recommendations</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+    .container {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      color: #343a40;
+    }
+    .recommendations {
+      margin-bottom: 20px;
+    }
+    .recommendations h2 {
+      color: #007bff;
+    }
+    .recommendations p {
+      margin-bottom: 10px;
+    }
+  </style>
+  <script type="module">
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyCF0rAGn6oWEp0Z1eZaaUEKvW8fcEisd4I",
+      authDomain: "stockrecommendationwebsite.firebaseapp.com",
+      projectId: "stockrecommendationwebsite",
+      storageBucket: "stockrecommendationwebsite.appspot.com",
+      messagingSenderId: "166461693887",
+      appId: "1:166461693887:web:cac88424c60943eac58b0a",
+      measurementId: "G-33B2MHTKR1"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          window.location.href = 'index.html'; // Redirect to login if not authenticated
+        } else {
+          console.log('User is authenticated:', user.uid);
+
+          const querySnapshot = await getDocs(collection(db, 'userProfiles'));
+          querySnapshot.forEach((doc) => {
+            if (doc.data().userId === user.uid) {
+              const userProfile = doc.data();
+              console.log('User Profile:', userProfile);
+
+              document.getElementById('name').innerText = userProfile.name;
+
+              const riskProfile = calculateRiskProfile(userProfile);
+              getRecommendations(riskProfile);
+            }
+          });
+        }
+      });
+    });
+  
+    function calculateRiskProfile(userProfile) {
+      let riskScore = 0;
+
+      const ageScore = userProfile['age'] === '<30' ? 1 : userProfile['age'] === '30-40' ? 2 : 3;
+      const incomeScore = userProfile['annual-income'] === '>1Cr' ? 3 : userProfile['annual-income'] === '50L - 1Cr' ? 2 : 1;
+      const investmentScore = userProfile['investment-value'] === '>1Cr' ? 3 : userProfile['investment-value'] === '50L-1Cr' ? 2 : 1;
+      const timeScore = userProfile['time-horizon'] === 'Above 5 years' ? 3 : userProfile['time-horizon'] === '3-5 Years' ? 2 : 1;
+      const expectationScore = userProfile['expectation'] === 'Seek long term wealth with chances of higher losses' ? 5 :
+                              userProfile['expectation'] === 'Seek higher return with moderate risk of losses' ? 4 :
+                              userProfile['expectation'] === 'Seek balance between growth and protection' ? 3 :
+                              userProfile['expectation'] === 'Protect Investment but look for slight growth' ? 2 : 1;
+
+      riskScore = ageScore + incomeScore + investmentScore + timeScore + expectationScore;
+
+      let riskProfile = '';
+      if (riskScore <= 5) {
+        riskProfile = 'Risk Averse';
+      } else if (riskScore <= 8) {
+        riskProfile = 'Conservative';
+      } else if (riskScore <= 11) {
+        riskProfile = 'Balanced';
+      } else if (riskScore <= 14) {
+        riskProfile = 'Growth';
+      } else {
+        riskProfile = 'High Growth';
+      }
+
+      return riskProfile;
+    }
+
+    function getRecommendations(riskProfile) {
+      fetch('/recommend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ risk_profile: riskProfile })
+      })
+      .then(response => response.json())
+      .then(recommendations => {
+        const recommendationsContainer = document.getElementById('recommendations');
+        recommendationsContainer.innerHTML = '';  // Clear existing recommendations
+        recommendations.forEach(stock => {
+          const stockElement = document.createElement('p');
+          stockElement.innerText = stock;
+          recommendationsContainer.appendChild(stockElement);
+        });
+      })
+      .catch(error => console.error('Error fetching recommendations:', error));
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Stock Recommendations</h1>
+    </div>
+    <div class="profile">
+      <h2>User Profile</h2>
+    </div>
+    <div class="recommendations">
+      <h2>Recommended Stocks</h2>
+      <div id="recommendations">
+        <!-- Recommended stocks will be dynamically inserted here -->
+      </div>
+    </div>
+  </div>
+</body>
+</html>
