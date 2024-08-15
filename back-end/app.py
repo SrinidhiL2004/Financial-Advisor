@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request,render_template
 from flask_cors import CORS
 import yfinance as yf
 
-app = Flask(__name__, template_folder='public')
+app = Flask(__name__, template_folder='../public')
 CORS(app)
 
 
